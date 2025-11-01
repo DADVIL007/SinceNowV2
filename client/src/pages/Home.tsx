@@ -40,6 +40,11 @@ export default function Home() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed)) {
+          console.error("Stored events is not an array, resetting");
+          localStorage.removeItem("sinceNow-events");
+          return;
+        }
         const eventsWithDates = parsed.map((e: any) => ({
           ...e,
           date: new Date(e.date),
@@ -47,6 +52,7 @@ export default function Home() {
         setEvents(eventsWithDates);
       } catch (error) {
         console.error("Failed to parse stored events:", error);
+        localStorage.removeItem("sinceNow-events");
       }
     }
   }, []);
@@ -54,6 +60,8 @@ export default function Home() {
   useEffect(() => {
     if (events.length > 0) {
       localStorage.setItem("sinceNow-events", JSON.stringify(events));
+    } else {
+      localStorage.removeItem("sinceNow-events");
     }
   }, [events]);
 

@@ -53,19 +53,26 @@ export function playMilestoneSound() {
   const soundEnabled = localStorage.getItem("sinceNow-sound") !== "false";
   if (!soundEnabled) return;
 
-  const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-  const oscillator = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
+  try {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
 
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
+    const audioContext = new AudioContext();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
 
-  oscillator.frequency.value = 800;
-  oscillator.type = "sine";
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
 
-  gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    oscillator.frequency.value = 800;
+    oscillator.type = "sine";
 
-  oscillator.start(audioContext.currentTime);
-  oscillator.stop(audioContext.currentTime + 0.5);
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  } catch (error) {
+    console.warn("Audio playback not supported:", error);
+  }
 }

@@ -8,19 +8,22 @@ export function StreakCounter() {
   useEffect(() => {
     const today = new Date().toDateString();
     const lastVisit = localStorage.getItem("sinceNow-lastVisit");
-    const currentStreak = parseInt(localStorage.getItem("sinceNow-streak") || "0");
+    const storedStreak = localStorage.getItem("sinceNow-streak") || "0";
+    const currentStreak = parseInt(storedStreak, 10);
+    
+    const validStreak = isNaN(currentStreak) ? 0 : currentStreak;
 
     if (lastVisit === today) {
-      setStreak(currentStreak);
+      setStreak(validStreak);
     } else {
       const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
       
       if (lastVisit === yesterday) {
-        const newStreak = currentStreak + 1;
+        const newStreak = validStreak + 1;
         setStreak(newStreak);
         localStorage.setItem("sinceNow-streak", newStreak.toString());
         
-        if (newStreak > currentStreak) {
+        if (newStreak > validStreak) {
           setShowCelebration(true);
           setTimeout(() => setShowCelebration(false), 3000);
         }

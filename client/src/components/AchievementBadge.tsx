@@ -59,7 +59,9 @@ export function getAchievements(events: any[]): Achievement[] {
     return acc + Math.abs(Math.floor(diffMs / (1000 * 60 * 60 * 24)));
   }, 0);
 
-  const maxStreak = parseInt(localStorage.getItem("sinceNow-streak") || "0");
+  const storedStreak = localStorage.getItem("sinceNow-streak") || "0";
+  const maxStreak = parseInt(storedStreak, 10);
+  const validMaxStreak = isNaN(maxStreak) ? 0 : maxStreak;
   const eventCount = events.length;
   const hasWeekEvent = events.some((e) => {
     const days = Math.abs(
@@ -98,7 +100,7 @@ export function getAchievements(events: any[]): Achievement[] {
       icon: Zap,
       title: "Consistent Tracker",
       description: "7-day login streak",
-      unlocked: maxStreak >= 7,
+      unlocked: validMaxStreak >= 7,
       gradient: "from-yellow-500 to-amber-500",
     },
     {

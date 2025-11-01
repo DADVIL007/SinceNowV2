@@ -91,9 +91,14 @@ export function EventCard({ event, onDelete, onShare }: EventCardProps) {
     if (event.mode !== "until") return 0;
     const now = new Date();
     const eventDate = new Date(event.date);
-    const total = eventDate.getTime() - now.getTime();
-    if (total <= 0) return 100;
-    return Math.min(100, Math.max(0, ((eventDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) * 100 / 365));
+    const diffMs = eventDate.getTime() - now.getTime();
+    
+    if (diffMs <= 0) return 100;
+    
+    const daysRemaining = Math.max(0, diffMs / (1000 * 60 * 60 * 24));
+    const percentage = Math.min(100, Math.max(0, 100 - (daysRemaining / 365 * 100)));
+    
+    return percentage;
   };
 
   const category = event.category || "other";
