@@ -51,13 +51,21 @@ export function EventForm({ onAddEvent }: EventFormProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="backdrop-blur-3xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl p-8 shadow-2xl">
-        <h1 className="text-4xl md:text-5xl font-poppins font-semibold text-center mb-3 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-          How long has it been...
-        </h1>
-        <p className="text-center text-foreground/70 mb-8 font-inter">
-          or how long until your life's biggest moments?
-        </p>
+      <div className="backdrop-blur-3xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl p-8 md:p-10 shadow-2xl">
+        <div className="text-center mb-8">
+          <div className="inline-block mb-4">
+            <div className="text-5xl mb-2 animate-float">✨</div>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-poppins font-bold text-center mb-4 bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 bg-clip-text text-transparent leading-tight">
+            Track Your Journey
+          </h1>
+          <p className="text-center text-foreground/80 text-lg md:text-xl mb-2 font-inter">
+            Measure moments that matter
+          </p>
+          <p className="text-center text-foreground/60 font-inter text-sm">
+            From achievements to aspirations, every second counts
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex gap-3 justify-center mb-6">
@@ -149,10 +157,14 @@ export function EventForm({ onAddEvent }: EventFormProps) {
 
           <Button
             type="submit"
-            className="w-full rounded-full py-6 text-lg font-poppins font-medium bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 transition-all duration-300 shadow-lg shadow-purple-500/25"
+            className="w-full rounded-full py-6 text-lg font-poppins font-medium bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 hover:from-purple-600 hover:via-pink-600 hover:to-blue-600 transition-all duration-300 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/50 hover:scale-105"
             data-testid="button-start-tracking"
           >
-            Start Tracking
+            <span className="flex items-center justify-center gap-2">
+              <span>✨</span>
+              Start Tracking
+              <span>✨</span>
+            </span>
           </Button>
         </form>
       </div>

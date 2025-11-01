@@ -100,7 +100,12 @@ export function EventCard({ event, onDelete, onShare }: EventCardProps) {
   const categoryConfig = CATEGORY_CONFIG[category];
 
   return (
-    <div className={`backdrop-blur-3xl bg-white/10 dark:bg-white/5 border ${showMilestone ? 'border-yellow-400/50 shadow-xl shadow-yellow-500/20' : 'border-white/20 dark:border-white/10'} rounded-3xl p-8 shadow-lg hover-elevate transition-all duration-300 group relative overflow-visible`}>
+    <div 
+      className={`backdrop-blur-3xl bg-white/10 dark:bg-white/5 border ${showMilestone ? 'border-yellow-400/50 shadow-xl shadow-yellow-500/20' : 'border-white/20 dark:border-white/10'} rounded-3xl p-8 shadow-lg hover-elevate transition-all duration-300 group relative overflow-visible hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1`}
+      style={{
+        transformStyle: "preserve-3d",
+      }}
+    >
       {showMilestone && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full text-sm font-poppins font-medium text-white shadow-lg animate-float z-10">
           🎉 {lastMilestone} Days Milestone!

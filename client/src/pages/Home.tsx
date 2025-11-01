@@ -7,9 +7,17 @@ import { SoundToggle } from "@/components/SoundToggle";
 import { StreakCounter } from "@/components/StreakCounter";
 import { StatsBar } from "@/components/StatsBar";
 import { FloatingParticles } from "@/components/FloatingParticles";
+import { RotatingTagline } from "@/components/RotatingTagline";
+import { WelcomeBanner } from "@/components/WelcomeBanner";
+import { FilterSort } from "@/components/FilterSort";
+import { AchievementsModal } from "@/components/AchievementsModal";
+import { Confetti } from "@/components/Confetti";
+import { Button } from "@/components/ui/button";
+import { Trophy } from "lucide-react";
 import type { EventCategory } from "@/components/CategoryBadge";
 
 type EventMode = "since" | "until";
+type SortOption = "newest" | "oldest" | "name" | "category";
 
 interface Event {
   id: string;
@@ -22,6 +30,10 @@ interface Event {
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const [shareEvent, setShareEvent] = useState<Event | null>(null);
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [filterCategory, setFilterCategory] = useState<EventCategory | "all">("all");
 
   useEffect(() => {
     const stored = localStorage.getItem("sinceNow-events");
@@ -47,6 +59,8 @@ export default function Home() {
 
   const handleAddEvent = (event: Event) => {
     setEvents((prev) => [...prev, event]);
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
   };
 
   const handleDeleteEvent = (id: string) => {
@@ -56,6 +70,23 @@ export default function Home() {
   const handleShareEvent = (event: Event) => {
     setShareEvent(event);
   };
+
+  const filteredAndSortedEvents = events
+    .filter((event) => filterCategory === "all" || event.category === filterCategory)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "newest":
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        case "oldest":
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "category":
+          return (a.category || "other").localeCompare(b.category || "other");
+        default:
+          return 0;
+      }
+    });
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -68,16 +99,31 @@ export default function Home() {
       </div>
 
       <FloatingParticles />
+      <WelcomeBanner />
+      {showConfetti && <Confetti />}
 
       <div className="relative z-10">
         <StreakCounter />
         
         <div className="fixed top-6 right-6 z-50 flex gap-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setShowAchievements(true)}
+            className="rounded-full backdrop-blur-xl bg-white/10 dark:bg-white/5 border-white/20"
+            data-testid="button-show-achievements"
+          >
+            <Trophy className="h-5 w-5 text-yellow-400" />
+          </Button>
           <SoundToggle />
           <ThemeToggle />
         </div>
 
         <div className="container mx-auto px-4 py-12 md:py-24">
+          <div className="mb-8">
+            <RotatingTagline />
+          </div>
+          
           <div className="mb-16">
             <EventForm onAddEvent={handleAddEvent} />
           </div>
@@ -120,16 +166,39 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {events.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onDelete={handleDeleteEvent}
-                  onShare={handleShareEvent}
-                />
-              ))}
-            </div>
+            <>
+              <FilterSort
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                filterCategory={filterCategory}
+                onFilterChange={setFilterCategory}
+              />
+              
+              {filteredAndSortedEvents.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="backdrop-blur-3xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl p-12 max-w-md mx-auto">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-2xl font-poppins font-semibold text-foreground mb-2">
+                      No events match your filters
+                    </h3>
+                    <p className="text-foreground/70 font-inter">
+                      Try adjusting your filter settings
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredAndSortedEvents.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      onDelete={handleDeleteEvent}
+                      onShare={handleShareEvent}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -142,6 +211,13 @@ export default function Home() {
         <ShareModal
           event={shareEvent}
           onClose={() => setShareEvent(null)}
+        />
+      )}
+
+      {showAchievements && (
+        <AchievementsModal
+          events={events}
+          onClose={() => setShowAchievements(false)}
         />
       )}
     </div>
