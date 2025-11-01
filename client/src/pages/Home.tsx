@@ -3,6 +3,11 @@ import { EventForm } from "@/components/EventForm";
 import { EventCard } from "@/components/EventCard";
 import { ShareModal } from "@/components/ShareModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SoundToggle } from "@/components/SoundToggle";
+import { StreakCounter } from "@/components/StreakCounter";
+import { StatsBar } from "@/components/StatsBar";
+import { FloatingParticles } from "@/components/FloatingParticles";
+import type { EventCategory } from "@/components/CategoryBadge";
 
 type EventMode = "since" | "until";
 
@@ -11,6 +16,7 @@ interface Event {
   name: string;
   date: Date;
   mode: EventMode;
+  category?: EventCategory;
 }
 
 export default function Home() {
@@ -61,8 +67,13 @@ export default function Home() {
         <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: "4s" }} />
       </div>
 
+      <FloatingParticles />
+
       <div className="relative z-10">
-        <div className="fixed top-6 right-6 z-50">
+        <StreakCounter />
+        
+        <div className="fixed top-6 right-6 z-50 flex gap-2">
+          <SoundToggle />
           <ThemeToggle />
         </div>
 
@@ -71,16 +82,41 @@ export default function Home() {
             <EventForm onAddEvent={handleAddEvent} />
           </div>
 
+          <StatsBar events={events} />
+
           {events.length === 0 ? (
             <div className="text-center py-20">
-              <div className="backdrop-blur-3xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl p-12 max-w-md mx-auto">
-                <div className="text-6xl mb-6 animate-float">⏰</div>
-                <h2 className="text-2xl font-poppins font-semibold text-foreground mb-3">
+              <div className="backdrop-blur-3xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl p-12 max-w-lg mx-auto">
+                <div className="text-7xl mb-6 animate-float">⏰</div>
+                <h2 className="text-3xl font-poppins font-semibold text-foreground mb-4">
                   Your journey starts here
                 </h2>
-                <p className="text-foreground/70 font-inter">
+                <p className="text-foreground/70 font-inter mb-8 text-lg">
                   Add your first moment above to begin tracking what matters most.
                 </p>
+                <div className="space-y-3 text-left">
+                  <div className="flex items-start gap-3 text-foreground/60">
+                    <span className="text-2xl">💪</span>
+                    <div>
+                      <p className="font-inter font-medium text-foreground">Track Progress</p>
+                      <p className="text-sm">Watch your achievements grow day by day</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-foreground/60">
+                    <span className="text-2xl">🎯</span>
+                    <div>
+                      <p className="font-inter font-medium text-foreground">Stay Motivated</p>
+                      <p className="text-sm">Get inspired with milestone celebrations</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-foreground/60">
+                    <span className="text-2xl">📊</span>
+                    <div>
+                      <p className="font-inter font-medium text-foreground">Build Streaks</p>
+                      <p className="text-sm">Form habits by checking in daily</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (

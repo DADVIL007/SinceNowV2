@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "lucide-react";
+import { CategoryBadge, type EventCategory } from "./CategoryBadge";
 
 type EventMode = "since" | "until";
 
@@ -12,6 +13,7 @@ interface EventFormProps {
     name: string;
     date: Date;
     mode: EventMode;
+    category: EventCategory;
   }) => void;
 }
 
@@ -20,6 +22,7 @@ export function EventForm({ onAddEvent }: EventFormProps) {
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
   const [mode, setMode] = useState<EventMode>("since");
+  const [category, setCategory] = useState<EventCategory>("other");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,11 +40,13 @@ export function EventForm({ onAddEvent }: EventFormProps) {
       name: eventName,
       date,
       mode,
+      category,
     });
 
     setEventName("");
     setEventDate("");
     setEventTime("");
+    setCategory("other");
   };
 
   return (
@@ -90,6 +95,22 @@ export function EventForm({ onAddEvent }: EventFormProps) {
               data-testid="input-event-name"
               required
             />
+          </div>
+
+          <div>
+            <Label className="text-foreground/90 font-inter mb-3 block">
+              Category
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {(["health", "goals", "relationships", "fitness", "learning", "career", "other"] as EventCategory[]).map((cat) => (
+                <CategoryBadge
+                  key={cat}
+                  category={cat}
+                  selected={category === cat}
+                  onSelect={setCategory}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

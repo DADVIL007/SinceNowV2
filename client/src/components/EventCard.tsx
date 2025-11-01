@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Share2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CategoryBadge, type EventCategory, CATEGORY_CONFIG } from "./CategoryBadge";
+import { playMilestoneSound } from "./SoundToggle";
 
 type EventMode = "since" | "until";
 
@@ -9,6 +11,7 @@ interface Event {
   name: string;
   date: Date;
   mode: EventMode;
+  category?: EventCategory;
 }
 
 interface EventCardProps {
@@ -73,6 +76,7 @@ export function EventCard({ event, onDelete, onShare }: EventCardProps) {
         if (milestone && milestone !== lastMilestone) {
           setShowMilestone(true);
           setLastMilestone(milestone);
+          playMilestoneSound();
           setTimeout(() => setShowMilestone(false), 3000);
         }
       }
@@ -92,6 +96,9 @@ export function EventCard({ event, onDelete, onShare }: EventCardProps) {
     return Math.min(100, Math.max(0, ((eventDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)) * 100 / 365));
   };
 
+  const category = event.category || "other";
+  const categoryConfig = CATEGORY_CONFIG[category];
+
   return (
     <div className={`backdrop-blur-3xl bg-white/10 dark:bg-white/5 border ${showMilestone ? 'border-yellow-400/50 shadow-xl shadow-yellow-500/20' : 'border-white/20 dark:border-white/10'} rounded-3xl p-8 shadow-lg hover-elevate transition-all duration-300 group relative overflow-visible`}>
       {showMilestone && (
@@ -102,12 +109,15 @@ export function EventCard({ event, onDelete, onShare }: EventCardProps) {
 
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-2xl font-poppins font-semibold text-foreground mb-1" data-testid={`text-event-name-${event.id}`}>
+          <h3 className="text-2xl font-poppins font-semibold text-foreground mb-2" data-testid={`text-event-name-${event.id}`}>
             {event.name}
           </h3>
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-inter font-medium bg-primary/20 text-primary">
-            {event.mode === "since" ? "Since" : "Until"}
-          </span>
+          <div className="flex gap-2 flex-wrap">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-inter font-medium bg-primary/20 text-primary">
+              {event.mode === "since" ? "Since" : "Until"}
+            </span>
+            <CategoryBadge category={category} />
+          </div>
         </div>
         
         {event.mode === "until" && (
